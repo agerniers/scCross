@@ -431,7 +431,9 @@ object scXBeam {
 
         if (verbose) println("\n2 samples: " + nBest.size + " solutions, new best: " + nBest.head._3)
 
-        for (lvl <- 3 to nbSam) {
+        var lvl = 3
+        var finished = false
+        while (!finished && lvl <= nbSam) {
             if (verbose) print(lvl + " samples: ")
             for ((prevCells, prevSamples) <- prevLvlNBest) {
                 val prevObjs = getObjAllGenes(m, 1, Array.fill(m.length)(0), prevCells.toList, Array(geneSum), nNeg, kappa).map(x => (x._1, x._2.head, x._3.head))
@@ -446,14 +448,22 @@ object scXBeam {
                     }
                 }
             }
-            val lvlBest = samplesIDs.indices.flatMap(sam => nBestQueues(sam).dequeueAll).toList.distinct.sortBy(-_._3)
-            if (verbose) print(lvlBest.size + " solutions")
-            if (lvlBest.head._3 >= nBest.head._3) {
-                nBest = lvlBest
-                if (verbose) print(", new best: " + nBest.head._3)
+
+            if (nBestQueues.exists(_.nonEmpty)) {
+                val lvlBest = samplesIDs.indices.flatMap(sam => nBestQueues(sam).dequeueAll).toList.distinct.sortBy(-_._3)
+                if (verbose) print(lvlBest.size + " solutions")
+                if (lvlBest.head._3 >= nBest.head._3) {
+                    nBest = lvlBest
+                    if (verbose) print(", new best: " + nBest.head._3)
+                }
+                prevLvlNBest = lvlBest.map(x => (x._1, x._4))
+                if (verbose) println()
+
+                lvl += 1
+            } else {
+                if (verbose) print("no solutions")
+                finished = true
             }
-            prevLvlNBest = lvlBest.map(x => (x._1, x._4))
-            if (verbose) println()
         }
 
         if (verbose) println("*** Beam search ***")
