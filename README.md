@@ -1,10 +1,10 @@
 # scCross
 
-R and Scala implementation of scCross [1].
+R and Scala implementation of scCross [1], a method to identify rare subpopulations of cells in scRNA-seq data comming from multiple samples.
 
 ### References
 
-[1] ...
+[1] Gerniers, A., Nijssen, S., and Dupont, P. (2024). scCross: efficient search for rare subpopulations across multiple single-cell samples. Bioinformatics, 40(6):btae371
 
 
 ## RScala
